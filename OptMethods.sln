@@ -1,0 +1,22 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimplexMethod", "SimplexMethod\SimplexMethod.csproj", "{7BA7875E-A3A7-48B0-8954-6EABBD549246}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tester", "Tester\Tester.csproj", "{66FFCDF2-0097-4BCF-B4B3-90637F1BBBF2}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{7BA7875E-A3A7-48B0-8954-6EABBD549246}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7BA7875E-A3A7-48B0-8954-6EABBD549246}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7BA7875E-A3A7-48B0-8954-6EABBD549246}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7BA7875E-A3A7-48B0-8954-6EABBD549246}.Release|Any CPU.Build.0 = Release|Any CPU
+		{66FFCDF2-0097-4BCF-B4B3-90637F1BBBF2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{66FFCDF2-0097-4BCF-B4B3-90637F1BBBF2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{66FFCDF2-0097-4BCF-B4B3-90637F1BBBF2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{66FFCDF2-0097-4BCF-B4B3-90637F1BBBF2}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal

@@ -1,0 +1,12 @@
+C:\Users\ixsun\RiderProjects\OptMethods\Tester\bin\Debug\netcoreapp2.0\Tester.deps.json
+C:\Users\ixsun\RiderProjects\OptMethods\Tester\bin\Debug\netcoreapp2.0\Tester.runtimeconfig.json
+C:\Users\ixsun\RiderProjects\OptMethods\Tester\bin\Debug\netcoreapp2.0\Tester.runtimeconfig.dev.json
+C:\Users\ixsun\RiderProjects\OptMethods\Tester\bin\Debug\netcoreapp2.0\Tester.dll
+C:\Users\ixsun\RiderProjects\OptMethods\Tester\bin\Debug\netcoreapp2.0\Tester.pdb
+C:\Users\ixsun\RiderProjects\OptMethods\Tester\bin\Debug\netcoreapp2.0\SimplexMethod.dll
+C:\Users\ixsun\RiderProjects\OptMethods\Tester\bin\Debug\netcoreapp2.0\SimplexMethod.pdb
+C:\Users\ixsun\RiderProjects\OptMethods\Tester\obj\Debug\netcoreapp2.0\Tester.csproj.CoreCompileInputs.cache
+C:\Users\ixsun\RiderProjects\OptMethods\Tester\obj\Debug\netcoreapp2.0\Tester.AssemblyInfoInputs.cache
+C:\Users\ixsun\RiderProjects\OptMethods\Tester\obj\Debug\netcoreapp2.0\Tester.AssemblyInfo.cs
+C:\Users\ixsun\RiderProjects\OptMethods\Tester\obj\Debug\netcoreapp2.0\Tester.dll
+C:\Users\ixsun\RiderProjects\OptMethods\Tester\obj\Debug\netcoreapp2.0\Tester.pdb

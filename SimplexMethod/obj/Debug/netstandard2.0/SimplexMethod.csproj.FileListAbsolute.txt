@@ -1,0 +1,8 @@
+C:\Users\ixsun\RiderProjects\OptMethods\SimplexMethod\bin\Debug\netstandard2.0\SimplexMethod.deps.json
+C:\Users\ixsun\RiderProjects\OptMethods\SimplexMethod\bin\Debug\netstandard2.0\SimplexMethod.dll
+C:\Users\ixsun\RiderProjects\OptMethods\SimplexMethod\bin\Debug\netstandard2.0\SimplexMethod.pdb
+C:\Users\ixsun\RiderProjects\OptMethods\SimplexMethod\obj\Debug\netstandard2.0\SimplexMethod.csproj.CoreCompileInputs.cache
+C:\Users\ixsun\RiderProjects\OptMethods\SimplexMethod\obj\Debug\netstandard2.0\SimplexMethod.AssemblyInfoInputs.cache
+C:\Users\ixsun\RiderProjects\OptMethods\SimplexMethod\obj\Debug\netstandard2.0\SimplexMethod.AssemblyInfo.cs
+C:\Users\ixsun\RiderProjects\OptMethods\SimplexMethod\obj\Debug\netstandard2.0\SimplexMethod.dll
+C:\Users\ixsun\RiderProjects\OptMethods\SimplexMethod\obj\Debug\netstandard2.0\SimplexMethod.pdb

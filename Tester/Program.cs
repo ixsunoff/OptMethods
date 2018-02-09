@@ -9,7 +9,6 @@ namespace Tester
     {
         static void Main(string[] args)
         {
-            BigInteger
             
             var func = new Relation(
                 new Dictionary<string, double>() {["x"] = 1, ["y"] = 2, ["z"] = 3},

@@ -8,10 +8,8 @@ namespace SimplexMethod
     {
         Equality, MoreEqual, LessEqual
     }
-
     
-    
-    internal struct BPN
+    public struct BPN
     {
         /// <summary>
         /// Коэффициент при составляющей числа, много большей любого исчисляемого числа
@@ -111,25 +109,34 @@ namespace SimplexMethod
         /// <summary>
         /// Набор переменных с коэффициентами
         /// </summary>
-        public Dictionary<string, double> VarCoefs { get; }
+        public Dictionary<string, BPN> VarCoefs { get; internal set; }
         /// <summary>
         /// независимый член
         /// </summary>
-        public double IndCoef { get; }
+        public BPN IndCoef { get; internal set; }
         public RelationType Type { get; internal set; }
 
+        private Relation(){}
+        
         public Relation(Dictionary<string, double> valCoefs, double indCoef, RelationType type)
         {
-            if (valCoefs != null) VarCoefs = valCoefs;
-            IndCoef = indCoef;
+            if (valCoefs == null) throw new ArgumentNullException(nameof(valCoefs));
+
+            VarCoefs = valCoefs.ToDictionary(c => c.Key, d => new BPN(0, d.Value));
+            IndCoef = new BPN(0d, indCoef);
             Type = type;
         }
         
-        //клонирование отношения
         public object Clone()
         {
             var cloneCoefs = VarCoefs.ToDictionary(c => c.Key, d => d.Value);
-            return new Relation(cloneCoefs, IndCoef, Type);
+            
+            var result = new Relation();
+            result.VarCoefs = cloneCoefs;
+            result.IndCoef = IndCoef;
+            result.Type = Type;
+
+            return result;
         }
 
         /// <summary>
@@ -145,15 +152,51 @@ namespace SimplexMethod
                 case RelationType.Equality:
                     break;
                 case RelationType.MoreEqual:
-                    result.VarCoefs.Add("u", -1);
+                    result.VarCoefs.Add("u", new BPN(-1));
                     result.Type = RelationType.Equality;
                     break;
                 case RelationType.LessEqual:
-                    result.VarCoefs.Add("u", 1);
+                    result.VarCoefs.Add("u", new BPN(1));
                     result.Type = RelationType.Equality;
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// Добавление дополнительной переменной "w", в случае если "u" меньше или равен 0  
+        /// </summary>
+        /// <param name="clone"></param>
+        /// <returns></returns>
+        internal Relation TryInsertW(bool clone = true)
+        {
+            var result = clone ? (Relation) Clone() : this;
+
+            var uCoef = GetCoefU();
+            if (uCoef == null || uCoef.Value.Fp < 0d) 
+                result.VarCoefs.Add("w", new BPN(1));
+
+            return result;
+        }
+        
+        /// <summary>
+        /// задаёт номер дополнительной переменной "w",
+        /// создаваемой при отрицательной или отсутствующей переменной "u" 
+        /// </summary>
+        /// <param name="number">задаваемый номер переменной "w"</param>
+        /// <param name="clone">Если true, то функция вернёт копию отношения "Relation"</param>
+        internal Relation NumerizeW(int number, bool clone = true)
+        {
+            var result = clone ? (Relation) Clone() : this;
+
+            if (result.VarCoefs.ContainsKey("w"))
+            {
+                var c = result.VarCoefs["w"];
+                result.VarCoefs.Remove("w");
+                result.VarCoefs.Add($"w{number}", c);
             }
 
             return result;
@@ -172,51 +215,12 @@ namespace SimplexMethod
             {
                 var c = result.VarCoefs["u"];
                 result.VarCoefs.Remove("u");
-                result.VarCoefs.Add("u" + number, c);
+                result.VarCoefs.Add($"u{number}", c);
             }
 
             return result;
         }
-
-        /// <summary>
-        /// Инвертирование коэффициентов в отношении
-        /// </summary>
-        /// <param name="clone">Если true, то функция вернёт копию отношения "Relation"</param>
-        internal Relation Invert(bool clone = true)
-        {
-            var result = clone ? (Relation) Clone() : this;
-
-            foreach (var pair in result.VarCoefs)
-                result.VarCoefs[pair.Key] = - result.VarCoefs[pair.Key];
-
-            return result;
-        }
-
-        /// <summary>
-        /// Добавление дополнительной переменной "w", в случае если "u" меньше или равен 0  
-        /// </summary>
-        /// <param name="clone"></param>
-        /// <returns></returns>
-        internal Relation TryInsertW(bool clone = true)
-        {
-            var result = clone ? (Relation) Clone() : this;
-
-            if (result.ContainsU()) return result;
-            
-            
-        }
         
-        /// <summary>
-        /// задаёт номер дополнительной переменной "w",
-        /// создаваемой при отрицательной или отсутствующей переменной "u" 
-        /// </summary>
-        /// <param name="number">задаваемый номер переменной "w"</param>
-        /// <param name="clone">Если true, то функция вернёт копию отношения "Relation"</param>
-        internal Relation NumerizeW(int number, bool clone = true)
-        {
-            
-        }
-
         /// <summary>
         /// Проверяет отношение на наличие дополнительной переменной "u"
         /// </summary>
@@ -232,6 +236,42 @@ namespace SimplexMethod
         {
             return VarCoefs.Select(c => c.Key).Any(c => c[0] == 'w');
         }
+
+        /// <summary>
+        /// Получение значения переменной "u"
+        /// </summary>
+        internal BPN? GetCoefU()
+        {
+            if (!ContainsU())
+                return null;
+            
+            return VarCoefs.First(c => c.Key[0] == 'u').Value;
+        }
+        
+        /// <summary>
+        /// Получение значения переменной "w"
+        /// </summary>
+        internal BPN? GetCoefW()
+        {
+            if (!ContainsW())
+                return null;
+            
+            return VarCoefs.First(c => c.Key[0] == 'v').Value;
+        }
+        
+        /// <summary>
+        /// Инвертирование коэффициентов в отношении
+        /// </summary>
+        /// <param name="clone">Если true, то функция вернёт копию отношения "Relation"</param>
+        internal Relation Invert(bool clone = true)
+        {
+            var result = clone ? (Relation) Clone() : this;
+
+            foreach (var pair in result.VarCoefs)
+                result.VarCoefs[pair.Key] = - result.VarCoefs[pair.Key];
+
+            return result;
+        }
     }
 
     public class SimplexLPT
@@ -244,13 +284,10 @@ namespace SimplexMethod
             if (function != null) Function = function;
             if (conditions != null) Conditions = conditions;
         }
-
-        private List<string> allVars;
-        private double
         
         public List<SimplexResults> Compute()
         {
-            Normalizate();
+            Canonize();
             
             return null;
         }

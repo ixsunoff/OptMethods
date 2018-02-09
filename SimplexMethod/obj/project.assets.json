@@ -202,25 +202,25 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\ixsun\\.nuget\\packages\\": {},
+    "C:\\Users\\Denis\\.nuget\\packages\\": {},
     "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackagesFallback": {},
     "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\ixsun\\RiderProjects\\OptMethods\\SimplexMethod\\SimplexMethod.csproj",
+      "projectUniqueName": "C:\\Users\\Denis\\RiderProjects\\OptMethods\\SimplexMethod\\SimplexMethod.csproj",
       "projectName": "SimplexMethod",
-      "projectPath": "C:\\Users\\ixsun\\RiderProjects\\OptMethods\\SimplexMethod\\SimplexMethod.csproj",
-      "packagesPath": "C:\\Users\\ixsun\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\ixsun\\RiderProjects\\OptMethods\\SimplexMethod\\obj\\",
+      "projectPath": "C:\\Users\\Denis\\RiderProjects\\OptMethods\\SimplexMethod\\SimplexMethod.csproj",
+      "packagesPath": "C:\\Users\\Denis\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\Denis\\RiderProjects\\OptMethods\\SimplexMethod\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackagesFallback",
         "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
       ],
       "configFilePaths": [
-        "C:\\Users\\ixsun\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\Denis\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.Fallback.config"
       ],

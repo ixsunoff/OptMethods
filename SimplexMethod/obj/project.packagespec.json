@@ -1,10 +1,10 @@
 ﻿{
   "version": "1.0.0",
   "restore": {
-    "projectUniqueName": "C:\\Users\\ixsun\\RiderProjects\\OptMethods\\SimplexMethod\\SimplexMethod.csproj",
+    "projectUniqueName": "C:\\Users\\Denis\\RiderProjects\\OptMethods\\SimplexMethod\\SimplexMethod.csproj",
     "projectName": "SimplexMethod",
-    "projectPath": "C:\\Users\\ixsun\\RiderProjects\\OptMethods\\SimplexMethod\\SimplexMethod.csproj",
-    "outputPath": "C:\\Users\\ixsun\\RiderProjects\\OptMethods\\SimplexMethod\\obj\\",
+    "projectPath": "C:\\Users\\Denis\\RiderProjects\\OptMethods\\SimplexMethod\\SimplexMethod.csproj",
+    "outputPath": "C:\\Users\\Denis\\RiderProjects\\OptMethods\\SimplexMethod\\obj\\",
     "projectStyle": "PackageReference",
     "fallbackFolders": [
       "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackagesFallback",

@@ -140,6 +140,24 @@ namespace SimplexMethod
         }
 
         /// <summary>
+        /// Добавляет в отношение дополнительную переменную,
+        /// коэффициент которой отличается от выбранной переменной лишь знаком
+        /// </summary>
+        /// <param name="varName">Обозначение переменной, для которой необходимо создать отрицательный дубликат</param>
+        /// <param name="clone">Если true, то функция вернёт копию отношения "Relation"</param>
+        internal Relation AddNegativeVar(string varName, bool clone = true)
+        {
+            if (!VarCoefs.ContainsKey(varName))
+                throw new ArgumentException("Данной переменной не существует в отношении");
+            
+            var result = clone ? (Relation)Clone() : this;
+            
+            result.VarCoefs.Add($"{varName}'", VarCoefs[varName]);
+
+            return result;
+        }
+        
+        /// <summary>
         /// Преобразует отношение к виду равенства
         /// </summary>
         /// <param name="clone">Если true, то функция вернёт копию отношения "Relation"</param>
@@ -255,8 +273,13 @@ namespace SimplexMethod
         {
             if (!ContainsW())
                 return null;
-            
+
             return VarCoefs.First(c => c.Key[0] == 'v').Value;
+        }
+
+        internal string GetCoefNameW()
+        {
+            return !ContainsW() ? null : VarCoefs.First(c => c.Key[0] == 'v').Key;
         }
         
         /// <summary>
@@ -269,21 +292,49 @@ namespace SimplexMethod
 
             foreach (var pair in result.VarCoefs)
                 result.VarCoefs[pair.Key] = - result.VarCoefs[pair.Key];
-
+            result.IndCoef = -result.IndCoef;
+            
             return result;
         }
     }
 
     public class SimplexLPT
     {
+        /// <summary>
+        /// Максимизируемая функция
+        /// </summary>
         public Relation Function { get; }
+        /// <summary>
+        /// Накладываемые условия в виде отношений
+        /// </summary>
         public List<Relation> Conditions { get; }
+        /// <summary>
+        /// Переменные, которые не могу принимать отрицательные значения
+        /// </summary>
+        public List<string> NotNegativeVars { get; }
+        public bool FindMax { get; }
 
-        public SimplexLPT(Relation function, List<Relation> conditions)
+        public SimplexLPT(Relation function, List<Relation> conditions, List<string> notNegativeVars, bool findMax)
         {
-            if (function != null) Function = function;
-            if (conditions != null) Conditions = conditions;
+            //TODO: выполнить проверку на null
+            Function = function;
+            Function.IndCoef = new BPN(0);
+            Conditions = conditions;
+            FindMax = findMax;
         }
+
+        //дополнительные методы
+        #region SubMethods
+
+        private IEnumerable<Relation> GetAllRelations()
+        {
+            foreach (var cond in Conditions)
+                yield return cond;
+            
+            yield return Function;
+        }
+
+        #endregion
         
         public List<SimplexResults> Compute()
         {
@@ -297,6 +348,55 @@ namespace SimplexMethod
         /// </summary>
         private void Canonize()
         {
+            //добавление дополнительных переменных в случае,
+            //если не на все переменные наложено условие неотрицательности
+            #region CatchNegativeVars
+
+            var canBeNegative = new List<string>();
+            
+            foreach (var relation in GetAllRelations())
+                canBeNegative.AddRange(
+                    relation.VarCoefs.Select(c => c.Key).Except(NotNegativeVars)
+                );
+            
+            canBeNegative = canBeNegative.Distinct().ToList();
+
+            foreach (var vr in canBeNegative)
+                foreach (var relation in GetAllRelations())
+                    if (relation.VarCoefs.ContainsKey(vr))
+                        relation.AddNegativeVar(vr, false);
+            
+            #endregion
+
+            //приведение всех условий к виду равенств
+            #region ConvertConditionsToEquality
+
+            foreach (var condition in Conditions)
+                condition.ConvertToEquality(false);
+
+            for (int i = 0; i < Conditions.Count; i++)
+                Conditions[i].NumerizeU(i + 1, false);
+
+            #endregion
+            
+            //преобразование задачи на минимум в задачу на максимум
+            if (!FindMax)
+                Function.Invert(false);
+            
+            //инвертирование условий с отрицательными свободными членами
+            foreach (var condition in Conditions)
+                if (condition.IndCoef < new BPN(0))
+                    condition.Invert(false);
+            
+            //добавление переменной "w"
+            for (int i = 0; i < Conditions.Count; i++)
+            {
+                Conditions[i].TryInsertW(false);
+                Conditions[i].NumerizeW(i + 1);
+                
+                if (Conditions[i].ContainsW())
+                    Function.VarCoefs.Add(Conditions[i].GetCoefNameW(), new BPN(-1, 0));    
+            }
             
         }
     }

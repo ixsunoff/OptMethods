@@ -34,8 +34,8 @@ namespace Tester
                 RelationType.LessEqual
             );
             
-            SimplexLPT test = new SimplexLPT(func, new List<Relation>(){cond1, cond2, cond3});
-            test.Compute();
+            //SimplexLPT test = new SimplexLPT(func, new List<Relation>(){cond1, cond2, cond3});
+            //test.Compute();
             Console.WriteLine("Hello World!");
         }
     }

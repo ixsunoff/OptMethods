@@ -1,49 +1,55 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 
 namespace SimplexMethod
 {
     public enum RelationType
     {
-        Equality, MoreEqual, LessEqual
+        Equality,
+        MoreEqual,
+        LessEqual
     }
-    
+
     public struct BPN
     {
         /// <summary>
         /// Коэффициент при составляющей числа, много большей любого исчисляемого числа
         /// </summary>
         public double Bp;
+
         /// <summary>
         /// Стандартное значение
         /// </summary>
         public double Fp;
 
-        public static int Tollerance = 20;
+        public static int Tollerance = 10;
         
-
-        public BPN(double bp, double fp, int tollerance = 20)
+        public BPN(double bp, double fp, int tollerance = 10)
         {
             this.Bp = bp;
             this.Fp = fp;
             Tollerance = tollerance;
         }
 
-        public BPN(double fp)
+        public BPN(double fp, int tollerance = 10)
         {
             Bp = 0;
             this.Fp = fp;
+            Tollerance = tollerance;
         }
 
         public static BPN operator +(BPN a, BPN b)
         {
             return new BPN(a.Bp + b.Bp, a.Fp + b.Fp);
         }
+
         public static BPN operator -(BPN a, BPN b)
         {
             return new BPN(a.Bp - b.Bp, a.Fp - b.Fp);
         }
+
         public static BPN operator -(BPN a)
         {
             return new BPN(-a.Bp, -a.Fp);
@@ -53,7 +59,7 @@ namespace SimplexMethod
         {
             if (Math.Abs(b.Bp) > Math.Pow(0.1d, -Tollerance))
                 throw new ArgumentException("Нельзя умножать на сколь угодно большое число");
-            
+
             return new BPN(a.Bp * b.Fp, a.Fp * b.Fp);
         }
 
@@ -61,10 +67,10 @@ namespace SimplexMethod
         {
             if (Math.Abs(b.Bp) > Math.Pow(0.1d, -Tollerance))
                 throw new ArgumentException("Нельзя делить на сколь угодно большое число");
-            
+
             return new BPN(a.Bp / b.Fp, a.Fp / b.Fp);
         }
-        
+
         public static bool operator >(BPN a, BPN b)
         {
             if (Math.Round(a.Bp, Tollerance) > Math.Round(b.Bp, Tollerance))
@@ -75,20 +81,24 @@ namespace SimplexMethod
 
             return false;
         }
+
         public static bool operator <(BPN a, BPN b)
         {
             if (Math.Round(a.Bp, Tollerance) < Math.Round(b.Bp, Tollerance))
                 return true;
             else if (Math.Abs(a.Bp - b.Bp) < Math.Pow(0.1d, Tollerance))
-                if (Math.Round(a.Fp, Tollerance) < Math.Round(b.Fp,-Tollerance))
+                if (Math.Round(a.Fp, Tollerance) < Math.Round(b.Fp, Tollerance))
                     return true;
 
             return false;
         }
+
         public static bool operator ==(BPN a, BPN b)
         {
-            return (Math.Abs(a.Bp - b.Bp) < Math.Pow(0.1d, -Tollerance)) && (Math.Abs(a.Fp - b.Fp) < Math.Pow(0.1d, -Tollerance));
+            return (Math.Abs(a.Bp - b.Bp) < Math.Pow(0.1d, -Tollerance)) &&
+                   (Math.Abs(a.Fp - b.Fp) < Math.Pow(0.1d, -Tollerance));
         }
+
         public static bool operator !=(BPN a, BPN b)
         {
             return !(a == b);
@@ -98,26 +108,41 @@ namespace SimplexMethod
         {
             return a == b || a > b;
         }
+
         public static bool operator <=(BPN a, BPN b)
         {
             return a == b || a < b;
         }
+
+        public override string ToString()
+        {
+            if (Math.Abs(Bp) < Math.Pow(0.1d, Tollerance))
+                return $"{Math.Round(Fp, Tollerance)}";
+            if (Math.Abs(Fp) < Math.Pow(0.1d, Tollerance))
+                return $"{Math.Round(Bp, Tollerance)}M";
+
+            return $"{Math.Round(Bp, Tollerance)}M + {Math.Round(Fp, Tollerance)}";
+        }
     }
-    
-    public class Relation: ICloneable
+
+    public class Relation : ICloneable
     {
         /// <summary>
         /// Набор переменных с коэффициентами
         /// </summary>
         public Dictionary<string, BPN> VarCoefs { get; internal set; }
+
         /// <summary>
         /// независимый член
         /// </summary>
         public BPN IndCoef { get; internal set; }
+
         public RelationType Type { get; internal set; }
 
-        private Relation(){}
-        
+        private Relation()
+        {
+        }
+
         public Relation(Dictionary<string, double> valCoefs, double indCoef, RelationType type)
         {
             if (valCoefs == null) throw new ArgumentNullException(nameof(valCoefs));
@@ -126,11 +151,11 @@ namespace SimplexMethod
             IndCoef = new BPN(0d, indCoef);
             Type = type;
         }
-        
+
         public object Clone()
         {
             var cloneCoefs = VarCoefs.ToDictionary(c => c.Key, d => d.Value);
-            
+
             var result = new Relation();
             result.VarCoefs = cloneCoefs;
             result.IndCoef = IndCoef;
@@ -149,21 +174,21 @@ namespace SimplexMethod
         {
             if (!VarCoefs.ContainsKey(varName))
                 throw new ArgumentException("Данной переменной не существует в отношении");
-            
-            var result = clone ? (Relation)Clone() : this;
-            
-            result.VarCoefs.Add($"{varName}'", VarCoefs[varName]);
+
+            var result = clone ? (Relation) Clone() : this;
+
+            result.VarCoefs.Add($"{varName}'", -VarCoefs[varName]);
 
             return result;
         }
-        
+
         /// <summary>
         /// Преобразует отношение к виду равенства
         /// </summary>
         /// <param name="clone">Если true, то функция вернёт копию отношения "Relation"</param>
         internal Relation ConvertToEquality(bool clone = true)
         {
-            var result = clone ? (Relation)Clone() : this;
+            var result = clone ? (Relation) Clone() : this;
 
             switch (Type)
             {
@@ -194,12 +219,12 @@ namespace SimplexMethod
             var result = clone ? (Relation) Clone() : this;
 
             var uCoef = GetCoefU();
-            if (uCoef == null || uCoef.Value.Fp < 0d) 
+            if (uCoef == null || uCoef.Value.Fp < 0d)
                 result.VarCoefs.Add("w", new BPN(1));
 
             return result;
         }
-        
+
         /// <summary>
         /// задаёт номер дополнительной переменной "w",
         /// создаваемой при отрицательной или отсутствующей переменной "u" 
@@ -238,7 +263,7 @@ namespace SimplexMethod
 
             return result;
         }
-        
+
         /// <summary>
         /// Проверяет отношение на наличие дополнительной переменной "u"
         /// </summary>
@@ -262,10 +287,10 @@ namespace SimplexMethod
         {
             if (!ContainsU())
                 return null;
-            
+
             return VarCoefs.First(c => c.Key[0] == 'u').Value;
         }
-        
+
         /// <summary>
         /// Получение значения переменной "w"
         /// </summary>
@@ -274,14 +299,21 @@ namespace SimplexMethod
             if (!ContainsW())
                 return null;
 
-            return VarCoefs.First(c => c.Key[0] == 'v').Value;
+            return VarCoefs.First(c => c.Key[0] == 'w').Value;
+        }
+
+        internal string GetCoefNameU()
+        {
+            return !ContainsU() ? null : VarCoefs.First(c => c.Key[0] == 'u').Key;
         }
 
         internal string GetCoefNameW()
         {
-            return !ContainsW() ? null : VarCoefs.First(c => c.Key[0] == 'v').Key;
+            return !ContainsW() ? null : VarCoefs.First(c => c.Key[0] == 'w').Key;
         }
+
         
+
         /// <summary>
         /// Инвертирование коэффициентов в отношении
         /// </summary>
@@ -290,10 +322,14 @@ namespace SimplexMethod
         {
             var result = clone ? (Relation) Clone() : this;
 
-            foreach (var pair in result.VarCoefs)
-                result.VarCoefs[pair.Key] = - result.VarCoefs[pair.Key];
+            for (int i = 0; i < result.VarCoefs.Count; i++)
+            {
+                var key = result.VarCoefs.Keys.ToList()[i];
+                result.VarCoefs[key] = -result.VarCoefs[key];
+            }
+
             result.IndCoef = -result.IndCoef;
-            
+
             return result;
         }
     }
@@ -304,14 +340,17 @@ namespace SimplexMethod
         /// Максимизируемая функция
         /// </summary>
         public Relation Function { get; }
+
         /// <summary>
         /// Накладываемые условия в виде отношений
         /// </summary>
         public List<Relation> Conditions { get; }
+
         /// <summary>
         /// Переменные, которые не могу принимать отрицательные значения
         /// </summary>
         public List<string> NotNegativeVars { get; }
+
         public bool FindMax { get; }
 
         public SimplexLPT(Relation function, List<Relation> conditions, List<string> notNegativeVars, bool findMax)
@@ -321,54 +360,50 @@ namespace SimplexMethod
             Function.IndCoef = new BPN(0);
             Conditions = conditions;
             FindMax = findMax;
+            NotNegativeVars = notNegativeVars;
         }
 
         //дополнительные методы
+
         #region SubMethods
 
         private IEnumerable<Relation> GetAllRelations()
         {
             foreach (var cond in Conditions)
                 yield return cond;
-            
+
             yield return Function;
         }
 
         #endregion
-        
-        public List<SimplexResults> Compute()
-        {
-            Canonize();
-            
-            return null;
-        }
-
         /// <summary>
         /// Этап приведения ЗЛП к каноническому виду 
         /// </summary>
-        private void Canonize()
+        public void Canonize()
         {
             //добавление дополнительных переменных в случае,
             //если не на все переменные наложено условие неотрицательности
+
             #region CatchNegativeVars
 
             var canBeNegative = new List<string>();
-            
+
             foreach (var relation in GetAllRelations())
                 canBeNegative.AddRange(
                     relation.VarCoefs.Select(c => c.Key).Except(NotNegativeVars)
                 );
-            
+
             canBeNegative = canBeNegative.Distinct().ToList();
 
             foreach (var vr in canBeNegative)
-                foreach (var relation in GetAllRelations())
-                    if (relation.VarCoefs.ContainsKey(vr))
-                        relation.AddNegativeVar(vr, false);
-            
+            foreach (var relation in GetAllRelations())
+                if (relation.VarCoefs.ContainsKey(vr))
+                    relation.AddNegativeVar(vr, false);
+
             #endregion
 
             //приведение всех условий к виду равенств
+
             #region ConvertConditionsToEquality
 
             foreach (var condition in Conditions)
@@ -378,34 +413,96 @@ namespace SimplexMethod
                 Conditions[i].NumerizeU(i + 1, false);
 
             #endregion
-            
+
             //преобразование задачи на минимум в задачу на максимум
             if (!FindMax)
                 Function.Invert(false);
-            
+
             //инвертирование условий с отрицательными свободными членами
             foreach (var condition in Conditions)
                 if (condition.IndCoef < new BPN(0))
                     condition.Invert(false);
-            
+
             //добавление переменной "w"
             for (int i = 0; i < Conditions.Count; i++)
             {
                 Conditions[i].TryInsertW(false);
-                Conditions[i].NumerizeW(i + 1);
-                
+                Conditions[i].NumerizeW(i + 1, false);
+
                 if (Conditions[i].ContainsW())
-                    Function.VarCoefs.Add(Conditions[i].GetCoefNameW(), new BPN(-1, 0));    
+                    Function.VarCoefs.Add(Conditions[i].GetCoefNameW(), new BPN(-1d, 0d));
             }
-            
         }
     }
 
-    public class SimplexResults
+    public class LptMatrix
     {
-        public double Answer { get; set; }
-        public Dictionary<Relation, double> ConditionsIndCoefs { get; set; }
-        
-        
+        public string[] BasisVars;
+        public string[] AllVars;
+
+        public BPN[] FuncCoefs;
+        public BPN[,] MainMatrix;
+
+
+        public LptMatrix(SimplexLPT lpt)
+        {
+            //заполнение вектора имён всех переменных
+            var allVars = new List<string>();
+
+            allVars.AddRange(lpt.Function.VarCoefs.Select(c => c.Key));
+            foreach (var cond in lpt.Conditions)
+                allVars.AddRange(cond.VarCoefs.Select(c => c.Key));
+
+            AllVars = allVars.Distinct().ToArray();
+
+            //заполение вектора коэффициентов переменных функции
+            FuncCoefs = new BPN[AllVars.Length];
+            for (int i = 0; i < AllVars.Length; i++)
+                if (lpt.Function.VarCoefs.ContainsKey(AllVars[i]))
+                    FuncCoefs[i] = lpt.Function.VarCoefs[AllVars[i]];
+
+            //заполнение вектора имён базисных переменных
+            BasisVars = new string[lpt.Conditions.Count];
+
+            for (int i = 0; i < lpt.Conditions.Count; i++)
+                if (lpt.Conditions[i].ContainsW())
+                    BasisVars[i] = lpt.Conditions[i].GetCoefNameW();
+                else BasisVars[i] = lpt.Conditions[i].GetCoefNameU();
+
+            //заполнение основной матрицы
+            #region fillMainMatrix
+            
+            MainMatrix = new BPN[lpt.Conditions.Count + 1, AllVars.Length + 1];
+
+            //заполнение части со свободными членами и части с коэффициентами при переменных условий
+            for (int i = 0; i < lpt.Conditions.Count; i++)
+            {
+                MainMatrix[i, 0] = lpt.Conditions[i].IndCoef;
+
+                for(int j = 0; j < AllVars.Length; j++)
+                    if (lpt.Conditions[i].VarCoefs.ContainsKey(AllVars[j]))
+                        MainMatrix[i, 1 + j] = lpt.Conditions[i].VarCoefs[AllVars[j]];
+            }
+
+            //заполнение левого нижнего угла матрицы
+            var buffCell = new BPN();
+            for (var i = 0; i < lpt.Conditions.Count - 1; i++)
+                buffCell += (lpt.Conditions[i].ContainsW() ? new BPN(-1d, 0d) : new BPN()) * MainMatrix[i, 0];
+            MainMatrix[MainMatrix.GetLength(0) - 1, 0] = buffCell;
+
+            //заполнение последней строки
+            for (int i = 1; i < MainMatrix.GetLength(1); i++)
+            {
+                buffCell = new BPN();
+
+                for (int j = 0; j < MainMatrix.GetLength(0) - 1; j++)
+                    if (BasisVars[j][0] == 'w')
+                        buffCell += new BPN(-1d, 0d) * MainMatrix[j, i];
+                    else buffCell += new BPN() * MainMatrix[j, i];
+
+                MainMatrix[MainMatrix.GetLength(0) - 1, i] += buffCell - FuncCoefs[i - 1];
+            }
+            #endregion
+        }
     }
 }

@@ -6,3 +6,12 @@ C:\Users\ixsun\RiderProjects\OptMethods\SimplexMethod\obj\Debug\netstandard2.0\S
 C:\Users\ixsun\RiderProjects\OptMethods\SimplexMethod\obj\Debug\netstandard2.0\SimplexMethod.AssemblyInfo.cs
 C:\Users\ixsun\RiderProjects\OptMethods\SimplexMethod\obj\Debug\netstandard2.0\SimplexMethod.dll
 C:\Users\ixsun\RiderProjects\OptMethods\SimplexMethod\obj\Debug\netstandard2.0\SimplexMethod.pdb
+C:\Users\Denis\RiderProjects\OptMethods\SimplexMethod\bin\Debug\netstandard2.0\SimplexMethod.deps.json
+C:\Users\Denis\RiderProjects\OptMethods\SimplexMethod\bin\Debug\netstandard2.0\SimplexMethod.dll
+C:\Users\Denis\RiderProjects\OptMethods\SimplexMethod\bin\Debug\netstandard2.0\SimplexMethod.pdb
+C:\Users\Denis\RiderProjects\OptMethods\SimplexMethod\obj\Debug\netstandard2.0\SimplexMethod.csproj.CoreCompileInputs.cache
+C:\Users\Denis\RiderProjects\OptMethods\SimplexMethod\obj\Debug\netstandard2.0\SimplexMethod.AssemblyInfoInputs.cache
+C:\Users\Denis\RiderProjects\OptMethods\SimplexMethod\obj\Debug\netstandard2.0\SimplexMethod.AssemblyInfo.cs
+C:\Users\Denis\RiderProjects\OptMethods\SimplexMethod\obj\Debug\netstandard2.0\SimplexMethod.dll
+C:\Users\Denis\RiderProjects\OptMethods\SimplexMethod\obj\Debug\netstandard2.0\SimplexMethod.pdb
+C:\Users\Denis\RiderProjects\OptMethods\SimplexMethod\obj\Debug\netstandard2.0\SimplexMethod.csprojResolveAssemblyReference.cache

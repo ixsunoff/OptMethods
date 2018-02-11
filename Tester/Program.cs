@@ -43,6 +43,7 @@ namespace Tester
             test.Canonize();
             
             var matrix = new LptMatrix(test);
+            var result = matrix.Compute();
 
             Console.WriteLine("Hello World!");
         }

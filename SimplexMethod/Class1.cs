@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using MathNet.Numerics.LinearAlgebra.Double.Solvers;
 
 namespace SimplexMethod
 {
@@ -26,6 +27,7 @@ namespace SimplexMethod
 
         public static int Tollerance = 10;
         
+        
         public BPN(double bp, double fp, int tollerance = 10)
         {
             this.Bp = bp;
@@ -39,6 +41,15 @@ namespace SimplexMethod
             this.Fp = fp;
             Tollerance = tollerance;
         }
+        
+        /// <summary>
+        /// проверяет, содержит ли число сколь угодно большой элемент
+        /// </summary>
+        public bool ContainsBigPart()
+        {
+            return !(Math.Abs(Bp) < Math.Pow(0.1d, Tollerance));
+        }
+        
 
         public static BPN operator +(BPN a, BPN b)
         {
@@ -54,6 +65,7 @@ namespace SimplexMethod
         {
             return new BPN(-a.Bp, -a.Fp);
         }
+        
 
         public static BPN operator *(BPN a, BPN b)
         {
@@ -70,6 +82,7 @@ namespace SimplexMethod
 
             return new BPN(a.Bp / b.Fp, a.Fp / b.Fp);
         }
+        
 
         public static bool operator >(BPN a, BPN b)
         {
@@ -442,10 +455,15 @@ namespace SimplexMethod
 
         public BPN[] FuncCoefs;
         public BPN[,] MainMatrix;
+        public bool FindMax;
+        
+        private List<LptMatrix> _recursiveAnswers = new List<LptMatrix>();
 
 
         public LptMatrix(SimplexLPT lpt)
         {
+            FindMax = lpt.FindMax;
+            
             //заполнение вектора имён всех переменных
             var allVars = new List<string>();
 
@@ -504,5 +522,163 @@ namespace SimplexMethod
             }
             #endregion
         }
+
+        public LptResult Compute()
+        {
+            var badNoVals = false;
+            
+            while (true)
+            {
+                if (CheckBottomPozitive()) return GetFinalAnswer();
+
+                var minBottomCol = GetMinimalBottom();
+                var bestRow = GetBestRow(minBottomCol);
+
+                if (bestRow == null)
+                {
+                    if (MainMatrix[MainMatrix.GetLength(0) - 1, 0].ContainsBigPart())
+                        badNoVals = true;
+                    
+                    break;
+                }
+                
+                //перерасчёт ячеек матрицы
+                var colBuffer = new BPN[MainMatrix.GetLength(0)];
+                
+                for (var i = 0; i < MainMatrix.GetLength(1); i++)
+                {
+                    if (i == minBottomCol) continue;
+                    
+                    for (var j = 0; j < MainMatrix.GetLength(0); j++)
+                        colBuffer[j] = MainMatrix[j, i];
+
+                    for (var j = 0; j < MainMatrix.GetLength(0); j++)
+                        if (j == bestRow.Value)
+                            MainMatrix[j, i] /= MainMatrix[j, minBottomCol];
+                        else
+                        {
+                            MainMatrix[j, i] = colBuffer[j] * MainMatrix[bestRow.Value, minBottomCol];
+                            MainMatrix[j, i] -= MainMatrix[j, minBottomCol] * colBuffer[bestRow.Value];
+                            MainMatrix[j, i] /= MainMatrix[bestRow.Value, minBottomCol];
+                        }
+                }
+
+                for (var i = 0; i < MainMatrix.GetLength(0); i++)
+                {
+                    if (i == bestRow.Value)
+                    {
+                        MainMatrix[i, minBottomCol] = new BPN(1d);
+                        continue;
+                    }
+                    
+                    MainMatrix[i, minBottomCol] = new BPN();
+                }
+
+                BasisVars[bestRow.Value] = AllVars[minBottomCol];
+            }
+            
+            //достигается при невозможности нахождения минимума/максимума
+            return new LptResult(){
+                Type = (badNoVals) ? ResultType.NoVals : ResultType.InfiniteMax
+            };
+        }
+
+        
+        /// <summary>
+        /// Проверяет, являются ли все нижние элементы MainMatrix (за исключением левой ячейки) положительными 
+        /// </summary>
+        private bool CheckBottomPozitive()
+        {
+            var matrixRow = MainMatrix.GetLength(0) - 1;
+            
+            for (var i = 1; i < MainMatrix.GetLength(1); i++)
+                if (MainMatrix[matrixRow, i] < new BPN(0d))
+                    return false;
+
+            return true;
+        }
+
+        //получение индекса столбца матрицы MainMatrix с минимальным нижним элементом
+        private int GetMinimalBottom()
+        {
+            var result = 1;
+            var matrixRow = MainMatrix.GetLength(0) - 1;
+            
+            for (var i = 2; i < MainMatrix.GetLength(1); i++)
+                if (MainMatrix[matrixRow, i] < MainMatrix[matrixRow, result])
+                    result = i;
+
+            return result;
+        }
+
+        //получение индекса опорной строки MainMatrix вместе с результатом деления свободного члена на элемент 
+        //Если в столбце не будет строго положительных значений, возвращается null
+        private int? GetBestRow(int col)
+        {
+            var colNums = new BPN[MainMatrix.GetLength(1) - 2];
+            for (var i = 0; i < colNums.Length; i++)
+                colNums[i] = MainMatrix[i, col];
+
+            var divs = new Dictionary<int, BPN>();
+            for (var i = 0; i < colNums.Length; i++)
+                if (colNums[i] > new BPN())
+                    divs.Add(i, MainMatrix[i, 0] / colNums[i]);
+
+            if (divs.Count == 0)
+                return null;
+
+            var minDiv = divs.ToList()[0];
+            foreach (var div in divs)
+                if (div.Value < minDiv.Value)
+                    minDiv = div;
+
+            return minDiv.Key;
+        }
+
+        private double GetBasisVarValue(string vrName)
+        {
+            if (!(BasisVars.Any(c => c == vrName))) return 0d;
+
+            return MainMatrix[BasisVars.ToList().IndexOf(vrName), 0].Fp;
+
+        }
+        
+        private LptResult GetFinalAnswer()
+        {
+            if (BasisVars.Any(c => c[0] == 'w'))
+                return new LptResult() {Type = ResultType.NoVals};
+
+            var result = new LptResult();
+            result.Type = ResultType.Done;
+            
+            var vrVals = AllVars.Where(vr => vr[0] != 'u' && vr[0] != 'w').ToDictionary(vr => vr, GetBasisVarValue);
+
+            foreach (var vrVal in vrVals)
+            {
+                if (vrVal.Key.Contains('\''))
+                    continue;
+                else if (vrVals.ContainsKey(vrVal.Key + "\'"))
+                    result.Vars.Add(vrVal.Key, vrVal.Value - vrVals[vrVal.Key + "\'"]);
+                else result.Vars.Add(vrVal.Key, vrVal.Value);
+            }
+
+            result.FuncValue = MainMatrix[MainMatrix.GetLength(0) - 1, 0].Fp;
+
+            return result;
+        }
+    }
+
+    public enum ResultType
+    {
+        Done, //решение ЗЛП найдено
+        NoVals, //множество допустимых решений ЗЛП пусто
+        InfiniteMax //функция не ограничена
+    }
+    
+    public class LptResult
+    {
+        public ResultType Type { get; internal set; }
+        public Dictionary<string, double> Vars { get; internal set; }
+        public double? FuncValue { get; internal set; }
     }
 }

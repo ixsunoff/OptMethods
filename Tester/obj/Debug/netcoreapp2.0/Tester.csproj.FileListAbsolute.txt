@@ -23,3 +23,4 @@ C:\Users\Denis\RiderProjects\OptMethods\Tester\obj\Debug\netcoreapp2.0\Tester.As
 C:\Users\Denis\RiderProjects\OptMethods\Tester\obj\Debug\netcoreapp2.0\Tester.dll
 C:\Users\Denis\RiderProjects\OptMethods\Tester\obj\Debug\netcoreapp2.0\Tester.pdb
 C:\Users\Denis\RiderProjects\OptMethods\Tester\obj\Debug\netcoreapp2.0\Tester.csprojResolveAssemblyReference.cache
+C:\Users\ixsun\RiderProjects\OptMethods\Tester\obj\Debug\netcoreapp2.0\Tester.csprojResolveAssemblyReference.cache

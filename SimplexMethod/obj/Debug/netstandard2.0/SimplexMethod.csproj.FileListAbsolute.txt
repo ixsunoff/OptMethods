@@ -15,3 +15,4 @@ C:\Users\Denis\RiderProjects\OptMethods\SimplexMethod\obj\Debug\netstandard2.0\S
 C:\Users\Denis\RiderProjects\OptMethods\SimplexMethod\obj\Debug\netstandard2.0\SimplexMethod.dll
 C:\Users\Denis\RiderProjects\OptMethods\SimplexMethod\obj\Debug\netstandard2.0\SimplexMethod.pdb
 C:\Users\Denis\RiderProjects\OptMethods\SimplexMethod\obj\Debug\netstandard2.0\SimplexMethod.csprojResolveAssemblyReference.cache
+C:\Users\ixsun\RiderProjects\OptMethods\SimplexMethod\obj\Debug\netstandard2.0\SimplexMethod.csprojResolveAssemblyReference.cache

@@ -9,35 +9,34 @@ namespace Tester
     {
         static void Main(string[] args)
         {
-            
             var func = new Relation(
-                new Dictionary<string, double>() {["x1"] = 2, ["x2"] = -3},
+                new Dictionary<string, double>() {["x1"] = 3, ["x2"] = 4 },
                 0,
                 RelationType.Equality
             );
             
             var cond1 = new Relation(
-                new Dictionary<string, double>() {["x1"] = 1, ["x2"] = -5},
-                -5,
+                new Dictionary<string, double>() {["x1"] = 1, ["x2"] = 1},
+                550,
                 RelationType.LessEqual
             );
             
             var cond2 = new Relation(
-                new Dictionary<string, double>() {["x1"] = 7, ["x2"] = 4},
-                28,
+                new Dictionary<string, double>() {["x1"] = 2, ["x2"] = 3},
+                1200,
                 RelationType.LessEqual
             );
 
             var cond3 = new Relation(
-                new Dictionary<string, double>() { ["x1"] = -7, ["x2"] = 2 },
-                0,
-                RelationType.MoreEqual
+                new Dictionary<string, double>() { ["x1"] = 12, ["x2"] = 30},
+                9600,
+                RelationType.LessEqual
             );
 
             var test = new SimplexLPT(
-                func, 
+                func,
                 new List<Relation>(){cond1, cond2, cond3}, 
-                new List<string>() {"x1"},
+                new List<string>() {"x1", "x2"},
                 true
             );
             test.Canonize();

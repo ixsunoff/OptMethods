@@ -471,7 +471,10 @@ namespace SimplexMethod
             foreach (var cond in lpt.Conditions)
                 allVars.AddRange(cond.VarCoefs.Select(c => c.Key));
 
-            AllVars = allVars.Distinct().ToArray();
+            allVars = allVars.Distinct().ToList();
+            SortVarArray(allVars);
+            AllVars = allVars.ToArray();
+
 
             //заполение вектора коэффициентов переменных функции
             FuncCoefs = new BPN[AllVars.Length];
@@ -574,7 +577,10 @@ namespace SimplexMethod
                     MainMatrix[i, minBottomCol] = new BPN();
                 }
 
-                BasisVars[bestRow.Value] = AllVars[minBottomCol];
+                var prevBasis = BasisVars[bestRow.Value];
+                var newBasis = AllVars[minBottomCol - 1];
+
+                BasisVars[bestRow.Value] = AllVars[minBottomCol - 1];
             }
             
             //достигается при невозможности нахождения минимума/максимума
@@ -615,7 +621,7 @@ namespace SimplexMethod
         //Если в столбце не будет строго положительных значений, возвращается null
         private int? GetBestRow(int col)
         {
-            var colNums = new BPN[MainMatrix.GetLength(1) - 2];
+            var colNums = new BPN[MainMatrix.GetLength(0) - 1];
             for (var i = 0; i < colNums.Length; i++)
                 colNums[i] = MainMatrix[i, col];
 
@@ -650,6 +656,7 @@ namespace SimplexMethod
 
             var result = new LptResult();
             result.Type = ResultType.Done;
+            result.Vars = new Dictionary<string, double>();
             
             var vrVals = AllVars.Where(vr => vr[0] != 'u' && vr[0] != 'w').ToDictionary(vr => vr, GetBasisVarValue);
 
@@ -662,9 +669,26 @@ namespace SimplexMethod
                 else result.Vars.Add(vrVal.Key, vrVal.Value);
             }
 
-            result.FuncValue = MainMatrix[MainMatrix.GetLength(0) - 1, 0].Fp;
+            result.FuncValue = MainMatrix[MainMatrix.GetLength(0) - 1, 0].Fp * (FindMax ? 1d : -1d);
 
             return result;
+        }
+
+        private void SortVarArray(List<string> arr)
+        {
+            var allVarsW = arr.FindAll(c => c[0] == 'w');
+            var allVarsU = arr.FindAll(c => c[0] == 'u');
+
+            arr.RemoveAll(c => allVarsU.Contains(c) || allVarsW.Contains(c));
+
+            var wVarsInds = allVarsW.Select(c => int.Parse(c.Remove(0, 1))).ToList();
+            var uVarsInds = allVarsU.Select(c => int.Parse(c.Remove(0, 1))).ToList();
+
+            wVarsInds.Sort();
+            uVarsInds.Sort();
+
+            arr.AddRange(uVarsInds.Select(c => "u" + c));
+            arr.AddRange(wVarsInds.Select(c => "w" + c));
         }
     }
 

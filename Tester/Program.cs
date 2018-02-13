@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Numerics;
 using SimplexMethod;
 
 namespace Tester
@@ -9,40 +8,29 @@ namespace Tester
     {
         static void Main(string[] args)
         {
-            var func = new Relation(
-                new Dictionary<string, double>() {["x1"] = 3, ["x2"] = 4 },
-                0,
+            var test = new SimplexLPT<decimal>(true, new List<string>() {"x1", "x2", "x3", "x4", "x5"});
+
+            test.AddFunction(new Dictionary<string, decimal>() {["x1"] = -3, ["x2"] = 1, ["x3"] = 4});
+
+            test.AddCondition(
+                new Dictionary<string, decimal>() {["x2"] = -1, ["x3"] = 1, ["x4"] = 1},
+                1,
                 RelationType.Equality
             );
             
-            var cond1 = new Relation(
-                new Dictionary<string, double>() {["x1"] = 1, ["x2"] = 1},
-                550,
-                RelationType.LessEqual
+            test.AddCondition(
+                new Dictionary<string, decimal>() {["x1"] = -5, ["x2"] = 1, ["x3"] = 1},
+                2,
+                RelationType.Equality
             );
             
-            var cond2 = new Relation(
-                new Dictionary<string, double>() {["x1"] = 2, ["x2"] = 3},
-                1200,
-                RelationType.LessEqual
+            test.AddCondition(
+                new Dictionary<string, decimal>() {["x1"] = -8, ["x2"] = 1, ["x3"] = 2, ["x5"] = -1},
+                3,
+                RelationType.Equality
             );
 
-            var cond3 = new Relation(
-                new Dictionary<string, double>() { ["x1"] = 12, ["x2"] = 30},
-                9600,
-                RelationType.LessEqual
-            );
-
-            var test = new SimplexLPT(
-                func,
-                new List<Relation>(){cond1, cond2, cond3}, 
-                new List<string>() {"x1", "x2"},
-                true
-            );
-            test.Canonize();
-            
-            var matrix = new LptMatrix(test);
-            var result = matrix.Compute();
+            var result = test.Compute();
 
             Console.WriteLine("Hello World!");
         }

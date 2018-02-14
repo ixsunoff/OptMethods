@@ -4,10 +4,30 @@
     <e p="C:\Users\ixsun\.Rider2017.3\system\resharper-host\local\Transient\ReSharperHost\v11\SolutionCaches\_OptMethods.-727120106.00" t="ExcludeRecursive" />
     <e p="C:\Users\ixsun\RiderProjects\OptMethods" t="IncludeFlat">
       <e p="OptMethods.sln" t="IncludeFlat" />
-      <e p="packages" t="ExcludeRecursive" />
+      <e p="packages" t="ExcludeRecursive">
+        <e p="MSTest.TestAdapter.1.2.0\build\_common\Microsoft.VisualStudio.TestPlatform.MSTest.TestAdapter.dll" t="Include" />
+        <e p="MSTest.TestAdapter.1.2.0\build\_common\Microsoft.VisualStudio.TestPlatform.MSTestAdapter.PlatformServices.dll" t="Include" />
+        <e p="MSTest.TestAdapter.1.2.0\build\_common\Microsoft.VisualStudio.TestPlatform.MSTestAdapter.PlatformServices.Interface.dll" t="Include" />
+        <e p="MSTest.TestAdapter.1.2.0\build\_common\ru\Microsoft.VisualStudio.TestPlatform.MSTest.TestAdapter.resources.dll" t="Include" />
+        <e p="MSTest.TestAdapter.1.2.0\build\_common\ru\Microsoft.VisualStudio.TestPlatform.MSTestAdapter.PlatformServices.resources.dll" t="Include" />
+        <e p="MSTest.TestAdapter.1.2.0\build\_common\ru\Microsoft.VisualStudio.TestPlatform.TestFramework.resources.dll" t="Include" />
+      </e>
       <e p="SimplexMethod" t="IncludeRecursive">
         <e p="bin" t="ExcludeRecursive" />
-        <e p="Class1.cs" t="Include" />
+        <e p="Bpn" t="Include">
+          <e p="Bpn.cs" t="Include" />
+          <e p="BpnFactory.cs" t="Include" />
+        </e>
+        <e p="Enums.cs" t="Include" />
+        <e p="LptMatrix.cs" t="Include" />
+        <e p="NumInterface" t="Include">
+          <e p="NumberOps.cs" t="Include" />
+          <e p="ReadyOps" t="Include">
+            <e p="DecimalOps.cs" t="Include" />
+            <e p="DoubleOps.cs" t="Include" />
+            <e p="FloatOps.cs" t="Include" />
+          </e>
+        </e>
         <e p="obj" t="ExcludeRecursive">
           <e p="Debug" t="Include">
             <e p="netstandard2.0" t="Include">
@@ -15,19 +35,20 @@
             </e>
           </e>
         </e>
+        <e p="Relation.cs" t="Include" />
+        <e p="SimplexLpt.cs" t="Include" />
         <e p="SimplexMethod.csproj" t="IncludeRecursive" />
       </e>
-      <e p="Tester" t="IncludeRecursive">
+      <e p="UnitTest.SimplexMethod" t="IncludeRecursive">
         <e p="bin" t="ExcludeRecursive" />
-        <e p="obj" t="ExcludeRecursive">
-          <e p="Debug" t="Include">
-            <e p="netcoreapp2.0" t="Include">
-              <e p="Tester.AssemblyInfo.cs" t="Include" />
-            </e>
-          </e>
+        <e p="obj" t="ExcludeRecursive" />
+        <e p="packages.config" t="Include" />
+        <e p="Properties" t="Include">
+          <e p="AssemblyInfo.cs" t="Include" />
         </e>
-        <e p="Program.cs" t="Include" />
-        <e p="Tester.csproj" t="IncludeRecursive" />
+        <e p="ru" t="Include" />
+        <e p="SimplexTest.cs" t="Include" />
+        <e p="UnitTest.SimplexMethod.csproj" t="IncludeRecursive" />
       </e>
     </e>
   </component>

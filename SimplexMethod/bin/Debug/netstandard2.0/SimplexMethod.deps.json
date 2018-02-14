@@ -1,7 +1,7 @@
 {
   "runtimeTarget": {
     "name": ".NETStandard,Version=v2.0/",
-    "signature": "4fc40737386b6b688c3ed8cd70c4fe8d66476ae7"
+    "signature": "d5ef1509ab9594c5ee7350d5e7860d93d6b54c43"
   },
   "compilationOptions": {},
   "targets": {
@@ -9,16 +9,10 @@
     ".NETStandard,Version=v2.0/": {
       "SimplexMethod/1.0.0": {
         "dependencies": {
-          "MathNet.Numerics": "4.0.0-beta06",
           "NETStandard.Library": "2.0.0"
         },
         "runtime": {
           "SimplexMethod.dll": {}
-        }
-      },
-      "MathNet.Numerics/4.0.0-beta06": {
-        "runtime": {
-          "lib/netstandard2.0/MathNet.Numerics.dll": {}
         }
       },
       "Microsoft.NETCore.Platforms/1.1.0": {},
@@ -34,13 +28,6 @@
       "type": "project",
       "serviceable": false,
       "sha512": ""
-    },
-    "MathNet.Numerics/4.0.0-beta06": {
-      "type": "package",
-      "serviceable": true,
-      "sha512": "sha512-SHDJFoxAZkLyB075Or2fh/SFl+eLnt0QqZduVDIpOEhRN3aUCW5N7WS88EP1wMNZov72km1K/cWjVbrsURkgqA==",
-      "path": "mathnet.numerics/4.0.0-beta06",
-      "hashPath": "mathnet.numerics.4.0.0-beta06.nupkg.sha512"
     },
     "Microsoft.NETCore.Platforms/1.1.0": {
       "type": "package",
